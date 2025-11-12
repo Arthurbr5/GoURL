@@ -56,7 +56,9 @@ exports.createShortUrl = async (req, res) => {
       await User.findByIdAndUpdate(userId, { $inc: { linksCreated: 1 } });
     }
 
-    const shortUrl = `${process.env.BASE_URL}/${shortCode}`;
+    // Gerar URL base (com fallback automático para produção)
+    const baseUrl = process.env.BASE_URL || 'https://gourl-w4hh.onrender.com';
+    const shortUrl = `${baseUrl}/${shortCode}`;
 
     res.status(201).json({
       success: true,
