@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - GoURL</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .analytics-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="analytics-container">
+        <div style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 30px;">
+            <h1 style="color: #333;">📊 Analytics</h1>
+            <div id="urlInfo" style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 10px;">
+                <div style="margin-bottom: 5px;"><strong>Link Curto:</strong> <span id="shortUrl"></span></div>
+                <div style="word-break: break-all;"><strong>URL Original:</strong> <span id="originalUrl"></span></div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total de Cliques</div>
+                <div class="stat-value" id="totalClicks">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Criado em</div>
+                <div class="stat-value" id="createdDate" style="font-size: 1.2em;">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Último Clique</div>
+                <div class="stat-value" id="lastClick" style="font-size: 1.2em;">-</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3 style="color: #333; margin-bottom: 20px;">Cliques por Data</h3>
+            <canvas id="clicksChart"></canvas>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div class="chart-container">
+                <h3 style="color: #333; margin-bottom: 20px;">Browsers</h3>
+                <canvas id="browsersChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3 style="color: #333; margin-bottom: 20px;">Dispositivos</h3>
+                <canvas id="devicesChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3 style="color: #333; margin-bottom: 20px;">Sistemas Operacionais</h3>
+                <canvas id="osChart"></canvas>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="index.html" style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 10px; font-weight: bold;">
+                ← Voltar
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        const urlParams = new URLSearchParams(window.location.search);
+        const shortCode = urlParams.get('code');
+
+        async function loadAnalytics() {
+            if (!shortCode) {
+                alert('Código do link não fornecido');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const headers = {};
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                const response = await fetch(`${API_URL}/analytics/${shortCode}`, { headers });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                const analytics = data.data;
+
+                // Atualizar informações básicas
+                document.getElementById('shortUrl').textContent = analytics.shortUrl;
+                document.getElementById('originalUrl').textContent = analytics.originalUrl;
+                document.getElementById('totalClicks').textContent = analytics.totalClicks;
+                document.getElementById('createdDate').textContent = new Date(analytics.createdAt).toLocaleDateString('pt-BR');
+                document.getElementById('lastClick').textContent = analytics.lastClickedAt ? new Date(analytics.lastClickedAt).toLocaleDateString('pt-BR') : 'Nunca';
+
+                // Gráfico de cliques por data
+                const clicksData = analytics.analytics.clicksByDate.sort((a, b) => new Date(a.date) - new Date(b.date));
+                new Chart(document.getElementById('clicksChart'), {
+                    type: 'line',
+                    data: {
+                        labels: clicksData.map(d => new Date(d.date).toLocaleDateString('pt-BR')),
+                        datasets: [{
+                            label: 'Cliques',
+                            data: clicksData.map(d => d.count),
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                // Gráfico de browsers
+                new Chart(document.getElementById('browsersChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: analytics.analytics.clicksByBrowser.map(d => d.browser),
+                        datasets: [{
+                            data: analytics.analytics.clicksByBrowser.map(d => d.count),
+                            backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b']
+                        }]
+                    }
+                });
+
+                // Gráfico de dispositivos
+                new Chart(document.getElementById('devicesChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: analytics.analytics.clicksByDevice.map(d => d.device),
+                        datasets: [{
+                            data: analytics.analytics.clicksByDevice.map(d => d.count),
+                            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b']
+                        }]
+                    }
+                });
+
+                // Gráfico de OS
+                new Chart(document.getElementById('osChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: analytics.analytics.clicksByOS.map(d => d.os),
+                        datasets: [{
+                            label: 'Cliques',
+                            data: analytics.analytics.clicksByOS.map(d => d.count),
+                            backgroundColor: '#667eea'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+            } catch (error) {
+                alert(error.message || 'Erro ao carregar analytics');
+                window.location.href = 'index.html';
+            }
+        }
+
+        loadAnalytics();
+    </script>
+</body>
+</html>

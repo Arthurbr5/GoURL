@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoURL - Encurtador de Links Profissional</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google AdSense - COLE SEU CÓDIGO AQUI -->
+    <!-- Exemplo: -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+</head>
+<body>
+    <div class="container">
+        <div class="auth-bar">
+            <div style="display: flex; gap: 15px; align-items: center; width: 100%;">
+                <a href="pricing.html" style="color: white; text-decoration: none; font-weight: 600; margin-right: auto;">💎 Ver Planos</a>
+                <div id="authSection"></div>
+            </div>
+        </div>
+        
+        <div class="header">
+            <h1>� GoURL</h1>
+            <p>Transforme seus links longos em URLs curtas e fáceis de compartilhar</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <input type="url" id="urlInput" placeholder="Cole seu link aqui..." required>
+                <button id="shortenBtn" onclick="shortenUrl()">Encurtar Link</button>
+            </div>
+
+            <div id="result" class="result hidden">
+                <div class="success-message">
+                    <h3>✅ Link encurtado com sucesso!</h3>
+                    <div class="shortened-url">
+                        <input type="text" id="shortenedUrl" readonly>
+                        <button onclick="copyToClipboard()">📋 Copiar</button>
+                    </div>
+                    <p class="original-url">URL original: <span id="originalUrl"></span></p>
+                </div>
+            </div>
+
+            <div id="error" class="error hidden"></div>
+        </div>
+
+        <!-- Google AdSense - Banner Principal -->
+        <div class="ad-container">
+            <!-- SUBSTITUA ESTE BLOCO pelo código de anúncio do AdSense -->
+            <!-- Exemplo de código AdSense Display: -->
+            <!--
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            -->
+            
+            <!-- Placeholder enquanto não tem AdSense aprovado -->
+            <div style="text-align: center; padding: 20px; background: #f9fafb; border-radius: 10px; color: #999;">
+                📢 Espaço para anúncios - AdSense em aprovação
+            </div>
+        </div>
+
+        <div class="links-list">
+            <h2>📊 Seus Links Encurtados</h2>
+            <div id="linksList"></div>
+        </div>
+
+        <!-- Google AdSense - Banner Rodapé -->
+        <div class="ad-container" style="margin-top: 30px;">
+            <!-- COLE AQUI outro código de anúncio do AdSense -->
+            <div style="text-align: center; padding: 20px; background: #f9fafb; border-radius: 10px; color: #999;">
+                📢 Espaço para anúncios - AdSense em aprovação
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Todos os links são armazenados com segurança no servidor</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

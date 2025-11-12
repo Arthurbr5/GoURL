@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecionando...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .redirect-container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+
+        p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .url-display {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            word-break: break-all;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .error {
+            color: #ef4444;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .countdown {
+            font-size: 1.5em;
+            color: #667eea;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="redirect-container">
+        <div id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <h1>🚀 Redirecionando...</h1>
+            <p>Você será redirecionado em instantes para:</p>
+            <div class="url-display" id="targetUrl"></div>
+            <div class="countdown" id="countdown"></div>
+        </div>
+
+        <div id="error" style="display: none;">
+            <h1>❌ Link não encontrado</h1>
+            <p class="error">Desculpe, este link encurtado não existe ou foi removido.</p>
+            <p>Verifique se o link está correto ou encurte um novo link.</p>
+            <a href="index.html" class="back-button">🔗 Voltar ao Encurtador</a>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'shortened_links';
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function loadLinks() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : {};
+        }
+
+        function saveLinks(links) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+        }
+
+        function redirect() {
+            const code = getQueryParam('code');
+
+            if (!code) {
+                showError();
+                return;
+            }
+
+            const links = loadLinks();
+            const linkData = links[code];
+
+            if (!linkData) {
+                showError();
+                return;
+            }
+
+            // Incrementar contador de cliques
+            linkData.clicks = (linkData.clicks || 0) + 1;
+            links[code] = linkData;
+            saveLinks(links);
+
+            // Mostrar interface de carregamento
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('targetUrl').textContent = linkData.original;
+
+            // Countdown e redirecionamento
+            let seconds = 3;
+            const countdownEl = document.getElementById('countdown');
+            countdownEl.textContent = `Redirecionando em ${seconds} segundos...`;
+
+            const interval = setInterval(() => {
+                seconds--;
+                if (seconds > 0) {
+                    countdownEl.textContent = `Redirecionando em ${seconds} segundos...`;
+                } else {
+                    clearInterval(interval);
+                    window.location.href = linkData.original;
+                }
+            }, 1000);
+
+            // Redirecionar imediatamente após 3 segundos
+            setTimeout(() => {
+                window.location.href = linkData.original;
+            }, 3000);
+        }
+
+        function showError() {
+            document.getElementById('error').style.display = 'block';
+        }
+
+        // Executar ao carregar a página
+        redirect();
+    </script>
+</body>
+</html>

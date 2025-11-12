@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos - GoURL</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .plans-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .plans-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+        .plans-header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .plan-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .plan-card.featured {
+            border: 3px solid #667eea;
+            transform: scale(1.05);
+        }
+        .plan-badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .plan-name {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .plan-price {
+            font-size: 3em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .plan-price span {
+            font-size: 0.4em;
+            color: #666;
+        }
+        .plan-features {
+            list-style: none;
+            margin: 30px 0;
+        }
+        .plan-features li {
+            padding: 12px 0;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+        .plan-features li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .plan-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .plan-button.free {
+            background: #e5e7eb;
+            color: #666;
+        }
+        .plan-button.premium {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .plan-button.business {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        .plan-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="plans-container">
+        <div class="plans-header">
+            <h1>💎 Escolha seu Plano</h1>
+            <p style="font-size: 1.2em;">Desbloqueie recursos premium e leve seu negócio para o próximo nível</p>
+        </div>
+
+        <div class="plans-grid">
+            <!-- Plano Free -->
+            <div class="plan-card">
+                <div class="plan-name">Free</div>
+                <div class="plan-price">R$ 0<span>/mês</span></div>
+                <ul class="plan-features">
+                    <li>100 links por mês</li>
+                    <li>Analytics básicos</li>
+                    <li>Links públicos</li>
+                    <li>Histórico de 30 dias</li>
+                    <li>Suporte por email</li>
+                </ul>
+                <button class="plan-button free" onclick="window.location.href='register.html'">
+                    Começar Grátis
+                </button>
+            </div>
+
+            <!-- Plano Premium -->
+            <div class="plan-card featured">
+                <div class="plan-badge">🔥 POPULAR</div>
+                <div class="plan-name">Premium</div>
+                <div class="plan-price">R$ 29<span>/mês</span></div>
+                <ul class="plan-features">
+                    <li>Links ilimitados</li>
+                    <li>Analytics avançados</li>
+                    <li>Links personalizados</li>
+                    <li>QR Codes personalizados</li>
+                    <li>Links com senha</li>
+                    <li>Sem anúncios</li>
+                    <li>Histórico completo</li>
+                    <li>Suporte prioritário</li>
+                </ul>
+                <button class="plan-button premium" onclick="alert('Em breve! Sistema de pagamento será integrado.')">
+                    Assinar Premium
+                </button>
+            </div>
+
+            <!-- Plano Business -->
+            <div class="plan-card">
+                <div class="plan-name">Business</div>
+                <div class="plan-price">R$ 99<span>/mês</span></div>
+                <ul class="plan-features">
+                    <li>Tudo do Premium +</li>
+                    <li>API de acesso</li>
+                    <li>Múltiplos usuários (5)</li>
+                    <li>White label</li>
+                    <li>Domínio personalizado</li>
+                    <li>Integrações avançadas</li>
+                    <li>Relatórios customizados</li>
+                    <li>Gerente de conta dedicado</li>
+                    <li>SLA 99.9%</li>
+                </ul>
+                <button class="plan-button business" onclick="alert('Em breve! Sistema de pagamento será integrado.')">
+                    Assinar Business
+                </button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px;">
+            <a href="index.html" style="color: white; text-decoration: none; font-size: 18px;">← Voltar para o início</a>
+        </div>
+
+        <!-- Seção de recursos comparativos -->
+        <div style="background: white; border-radius: 20px; padding: 40px; margin-top: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <h2 style="text-align: center; color: #333; margin-bottom: 30px;">Por que escolher nosso Premium?</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">📊</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Analytics Detalhados</h3>
+                    <p style="color: #666;">Veja exatamente quem clicou, quando e de onde</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🎨</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Personalização Total</h3>
+                    <p style="color: #666;">Crie links com seu branding e domínio</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🚀</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Sem Limites</h3>
+                    <p style="color: #666;">Crie quantos links precisar, sem restrições</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🔒</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">Segurança Extra</h3>
+                    <p style="color: #666;">Proteja seus links com senha e controle de acesso</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
