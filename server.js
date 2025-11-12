@@ -27,6 +27,7 @@ app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/biolink', require('./routes/biolink'));
 app.use('/api/qrcode', require('./routes/qrcode'));
 app.use('/api/apikey', require('./routes/apikey'));
+app.use('/api/payments', require('./routes/payments'));
 
 // Rota especial para Bio Links (@username)
 app.get('/@:username', async (req, res) => {

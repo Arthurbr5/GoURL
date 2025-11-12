@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - GoURL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .checkout-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .plan-info {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .plan-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .plan-price {
+            font-size: 32px;
+            font-weight: 800;
+            color: #333;
+            margin: 10px 0;
+        }
+        .plan-price span {
+            font-size: 16px;
+            color: #666;
+        }
+        .features {
+            list-style: none;
+            margin: 20px 0;
+        }
+        .features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .features li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .payment-methods {
+            margin: 30px 0;
+        }
+        .payment-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .payment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .mercadopago-btn {
+            background: #00b1ea;
+            color: white;
+        }
+        .stripe-btn {
+            background: #635bff;
+            color: white;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <h1>💳 Finalizar Assinatura</h1>
+        <p style="color: #666; margin-bottom: 20px;">Escolha sua forma de pagamento</p>
+
+        <div class="plan-info">
+            <div class="plan-name" id="planName">Pro</div>
+            <div class="plan-price">R$ <span id="planPrice">29</span><span>/mês</span></div>
+            <ul class="features" id="planFeatures">
+                <li>Carregando...</li>
+            </ul>
+        </div>
+
+        <div class="error" id="error"></div>
+        
+        <div class="payment-methods">
+            <button class="payment-btn mercadopago-btn" onclick="checkout('mercadopago')">
+                💳 Pagar com Mercado Pago
+                <span style="font-size: 12px;">(PIX, Boleto, Cartão)</span>
+            </button>
+            
+            <button class="payment-btn stripe-btn" onclick="checkout('stripe')">
+                💳 Pagar com Cartão Internacional
+                <span style="font-size: 12px;">(Stripe)</span>
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px;">Processando...</p>
+        </div>
+
+        <div class="back-link">
+            <a href="pricing.html">← Voltar para planos</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000/api' 
+            : `${window.location.origin}/api`;
+
+        const PLANS = {
+            pro: {
+                name: 'Pro',
+                price: 29,
+                features: [
+                    '500 links por mês',
+                    'Bio Link personalizado',
+                    'QR Codes coloridos',
+                    'Analytics avançados',
+                    'Links personalizados',
+                    'Sem anúncios'
+                ]
+            },
+            business: {
+                name: 'Business',
+                price: 79,
+                features: [
+                    '2.000 links por mês',
+                    'Tudo do Pro +',
+                    'Pixels de remarketing',
+                    'API (10k requisições/mês)',
+                    'Links com senha',
+                    'White label'
+                ]
+            },
+            enterprise: {
+                name: 'Enterprise',
+                price: 199,
+                features: [
+                    'Links ilimitados',
+                    'API ilimitada',
+                    'Múltiplos usuários',
+                    'Domínio personalizado',
+                    'Suporte prioritário',
+                    'SLA 99.9%'
+                ]
+            }
+        };
+
+        // Pegar plano da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedPlan = urlParams.get('plan') || 'pro';
+
+        // Exibir informações do plano
+        function displayPlan() {
+            const plan = PLANS[selectedPlan];
+            if (!plan) {
+                window.location.href = 'pricing.html';
+                return;
+            }
+
+            document.getElementById('planName').textContent = plan.name;
+            document.getElementById('planPrice').textContent = plan.price;
+            
+            const featuresList = document.getElementById('planFeatures');
+            featuresList.innerHTML = plan.features.map(f => `<li>${f}</li>`).join('');
+        }
+
+        // Fazer checkout
+        async function checkout(method) {
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                alert('Você precisa estar logado! Redirecionando...');
+                window.location.href = 'login.html?redirect=checkout.html?plan=' + selectedPlan;
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            
+            loading.style.display = 'block';
+            error.style.display = 'none';
+
+            try {
+                const endpoint = method === 'mercadopago' 
+                    ? '/payments/mercadopago/create-checkout'
+                    : '/payments/stripe/create-checkout';
+
+                const response = await fetch(`${API_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ plan: selectedPlan })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Erro ao criar checkout');
+                }
+
+                // Redirecionar para página de pagamento
+                window.location.href = result.data.checkoutUrl;
+
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                error.textContent = '❌ ' + err.message;
+            }
+        }
+
+        // Carregar plano ao abrir página
+        displayPlan();
+    </script>
+</body>
+</html>

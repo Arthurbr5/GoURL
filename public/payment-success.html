@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Aprovado! - GoURL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .plan-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+        .benefits {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        .benefits h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .benefits ul {
+            list-style: none;
+        }
+        .benefits li {
+            padding: 8px 0;
+            color: #555;
+        }
+        .benefits li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">🎉</div>
+        <h1>Pagamento Aprovado!</h1>
+        <p>Bem-vindo ao seu novo plano premium</p>
+        
+        <div class="plan-badge" id="planName">Plano Pro</div>
+
+        <div class="benefits">
+            <h3>🚀 Seus novos recursos:</h3>
+            <ul id="features">
+                <li>Carregando...</li>
+            </ul>
+        </div>
+
+        <p style="font-size: 0.9em; color: #999;">
+            Você receberá um email de confirmação em instantes
+        </p>
+
+        <div>
+            <a href="index.html" class="btn">Começar a Usar</a>
+            <a href="analytics.html" class="btn btn-secondary">Ver Painel</a>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const plan = urlParams.get('plan') || 'pro';
+
+        const PLANS = {
+            pro: {
+                name: 'Pro',
+                features: [
+                    '500 links por mês',
+                    'Bio Link personalizado',
+                    'QR Codes coloridos',
+                    'Analytics avançados',
+                    'Links personalizados',
+                    'Sem anúncios',
+                    'Suporte prioritário'
+                ]
+            },
+            business: {
+                name: 'Business',
+                features: [
+                    '2.000 links por mês',
+                    'Pixels de remarketing',
+                    'API com 10k requisições',
+                    'Links com senha',
+                    'White label',
+                    'Tudo do plano Pro',
+                    'Suporte 24/7'
+                ]
+            },
+            enterprise: {
+                name: 'Enterprise',
+                features: [
+                    'Links ilimitados',
+                    'API ilimitada',
+                    'Múltiplos usuários',
+                    'Domínio personalizado',
+                    'Gerente de conta dedicado',
+                    'SLA 99.9%',
+                    'Tudo do plano Business'
+                ]
+            }
+        };
+
+        const planData = PLANS[plan];
+        if (planData) {
+            document.getElementById('planName').textContent = `Plano ${planData.name}`;
+            document.getElementById('features').innerHTML = 
+                planData.features.map(f => `<li>${f}</li>`).join('');
+        }
+    </script>
+</body>
+</html>
