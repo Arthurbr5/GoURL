@@ -73,19 +73,13 @@ const urlSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now,
-    index: true
+    default: Date.now
   },
   lastClickedAt: {
     type: Date,
     default: null
   }
 });
-
-// Índices para performance
-urlSchema.index({ userId: 1, createdAt: -1 });
-urlSchema.index({ shortCode: 1 });
-urlSchema.index({ customAlias: 1 });
 
 // Método para incrementar cliques
 urlSchema.methods.recordClick = async function(clickData) {
