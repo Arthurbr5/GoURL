@@ -24,6 +24,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/urls', require('./routes/urls'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/biolink', require('./routes/biolink'));
+app.use('/api/qrcode', require('./routes/qrcode'));
+app.use('/api/apikey', require('./routes/apikey'));
+
+// Rota especial para Bio Links (@username)
+app.get('/@:username', async (req, res) => {
+  // Servir página HTML do bio link
+  res.sendFile(path.join(__dirname, 'public', 'biolink.html'));
+});
 
 // Rota de redirecionamento (links curtos)
 app.get('/:shortCode', require('./controllers/redirectController'));

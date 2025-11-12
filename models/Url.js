@@ -64,6 +64,25 @@ const urlSchema = new mongoose.Schema({
   tags: [{
     type: String
   }],
+  pixels: {
+    facebookPixel: {
+      id: String,
+      enabled: { type: Boolean, default: false }
+    },
+    googleAnalytics: {
+      id: String,
+      enabled: { type: Boolean, default: false }
+    },
+    tiktokPixel: {
+      id: String,
+      enabled: { type: Boolean, default: false }
+    },
+    customPixels: [{
+      name: String,
+      code: String,
+      enabled: { type: Boolean, default: true }
+    }]
+  },
   utmParams: {
     source: String,
     medium: String,

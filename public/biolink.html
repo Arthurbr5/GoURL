@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+            background: var(--bg-color, #ffffff);
+            color: var(--text-color, #000000);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 680px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            object-fit: cover;
+            border: 4px solid var(--button-color, #000000);
+        }
+
+        .display-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .bio {
+            font-size: 14px;
+            margin-bottom: 24px;
+            opacity: 0.8;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .link-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 24px;
+            background: var(--button-color, #000000);
+            color: var(--button-text-color, #ffffff);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            gap: 12px;
+        }
+
+        .link-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--button-color, #000000);
+            color: var(--button-text-color, #ffffff);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .loading {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .error {
+            color: #ef4444;
+            font-size: 18px;
+        }
+
+        .powered-by {
+            margin-top: 48px;
+            opacity: 0.5;
+            font-size: 12px;
+        }
+
+        .powered-by a {
+            color: inherit;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loading">Carregando...</div>
+    </div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000/api' 
+            : `${window.location.origin}/api`;
+
+        async function loadBioLink() {
+            try {
+                const username = window.location.pathname.replace('/@', '');
+                
+                const response = await fetch(`${API_URL}/biolink/${username}`);
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Bio Link não encontrado');
+                }
+
+                const bioData = result.data;
+                renderBioLink(bioData);
+
+            } catch (error) {
+                document.querySelector('.container').innerHTML = `
+                    <div class="error">❌ ${error.message}</div>
+                    <div style="margin-top: 24px;">
+                        <a href="/" style="color: inherit;">← Voltar para Home</a>
+                    </div>
+                `;
+            }
+        }
+
+        function renderBioLink(data) {
+            // Aplicar tema
+            document.documentElement.style.setProperty('--bg-color', data.theme.backgroundColor);
+            document.documentElement.style.setProperty('--text-color', data.theme.textColor);
+            document.documentElement.style.setProperty('--button-color', data.theme.buttonColor);
+            document.documentElement.style.setProperty('--button-text-color', data.theme.buttonTextColor);
+            document.documentElement.style.setProperty('--font-family', data.theme.fontFamily);
+
+            // Definir título da página
+            document.title = data.seo?.title || `${data.displayName} | GoURL`;
+
+            // Meta tags SEO
+            if (data.seo) {
+                const metaDescription = document.createElement('meta');
+                metaDescription.name = 'description';
+                metaDescription.content = data.seo.description || data.bio;
+                document.head.appendChild(metaDescription);
+            }
+
+            // Renderizar conteúdo
+            let html = '';
+
+            if (data.avatar) {
+                html += `<img src="${data.avatar}" alt="${data.displayName}" class="avatar">`;
+            }
+
+            html += `<h1 class="display-name">${escapeHtml(data.displayName)}</h1>`;
+
+            if (data.bio) {
+                html += `<p class="bio">${escapeHtml(data.bio)}</p>`;
+            }
+
+            if (data.links && data.links.length > 0) {
+                html += '<div class="links">';
+                data.links.forEach((link, index) => {
+                    html += `
+                        <a href="${link.url}" 
+                           class="link-button" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           onclick="trackClick('${data.username}', ${index})">
+                            ${link.title}
+                        </a>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            if (data.socialMedia) {
+                const socials = [];
+                if (data.socialMedia.instagram) socials.push({ icon: 'IG', url: `https://instagram.com/${data.socialMedia.instagram}` });
+                if (data.socialMedia.twitter) socials.push({ icon: 'TW', url: `https://twitter.com/${data.socialMedia.twitter}` });
+                if (data.socialMedia.tiktok) socials.push({ icon: 'TT', url: `https://tiktok.com/@${data.socialMedia.tiktok}` });
+                if (data.socialMedia.youtube) socials.push({ icon: 'YT', url: `https://youtube.com/@${data.socialMedia.youtube}` });
+                if (data.socialMedia.github) socials.push({ icon: 'GH', url: `https://github.com/${data.socialMedia.github}` });
+
+                if (socials.length > 0) {
+                    html += '<div class="social-icons">';
+                    socials.forEach(social => {
+                        html += `<a href="${social.url}" class="social-icon" target="_blank" rel="noopener">${social.icon}</a>`;
+                    });
+                    html += '</div>';
+                }
+            }
+
+            html += `
+                <div class="powered-by">
+                    Powered by <a href="https://gourl-w4hh.onrender.com" target="_blank">GoURL</a>
+                </div>
+            `;
+
+            // CSS customizado (se premium)
+            if (data.customCSS) {
+                const style = document.createElement('style');
+                style.textContent = data.customCSS;
+                document.head.appendChild(style);
+            }
+
+            document.querySelector('.container').innerHTML = html;
+        }
+
+        function trackClick(username, linkIndex) {
+            fetch(`${API_URL}/biolink/track-click`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, linkIndex })
+            }).catch(() => {});
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Carregar ao abrir página
+        loadBioLink();
+    </script>
+</body>
+</html>

@@ -22,8 +22,10 @@
         }
         .plans-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         .plan-card {
             background: white;
@@ -125,6 +127,7 @@
                 <ul class="plan-features">
                     <li>100 links por mês</li>
                     <li>Analytics básicos</li>
+                    <li>QR Codes simples</li>
                     <li>Links públicos</li>
                     <li>Histórico de 30 dias</li>
                     <li>Suporte por email</li>
@@ -134,43 +137,64 @@
                 </button>
             </div>
 
-            <!-- Plano Premium -->
+            <!-- Plano Pro -->
             <div class="plan-card featured">
                 <div class="plan-badge">🔥 POPULAR</div>
-                <div class="plan-name">Premium</div>
+                <div class="plan-name">Pro</div>
                 <div class="plan-price">R$ 29<span>/mês</span></div>
                 <ul class="plan-features">
-                    <li>Links ilimitados</li>
+                    <li>500 links por mês</li>
+                    <li>Bio Link (tipo Linktree)</li>
+                    <li>QR Codes coloridos</li>
                     <li>Analytics avançados</li>
                     <li>Links personalizados</li>
-                    <li>QR Codes personalizados</li>
-                    <li>Links com senha</li>
                     <li>Sem anúncios</li>
                     <li>Histórico completo</li>
                     <li>Suporte prioritário</li>
                 </ul>
                 <button class="plan-button premium" onclick="alert('Em breve! Sistema de pagamento será integrado.')">
-                    Assinar Premium
+                    Assinar Pro
                 </button>
             </div>
 
             <!-- Plano Business -->
             <div class="plan-card">
                 <div class="plan-name">Business</div>
-                <div class="plan-price">R$ 99<span>/mês</span></div>
+                <div class="plan-price">R$ 79<span>/mês</span></div>
                 <ul class="plan-features">
-                    <li>Tudo do Premium +</li>
-                    <li>API de acesso</li>
-                    <li>Múltiplos usuários (5)</li>
+                    <li>2.000 links por mês</li>
+                    <li>Tudo do Pro +</li>
+                    <li>Pixels de remarketing</li>
+                    <li>Facebook & Google Ads</li>
+                    <li>Links com senha</li>
+                    <li>API (10k requisições/mês)</li>
+                    <li>Integração Zapier</li>
                     <li>White label</li>
-                    <li>Domínio personalizado</li>
-                    <li>Integrações avançadas</li>
-                    <li>Relatórios customizados</li>
-                    <li>Gerente de conta dedicado</li>
-                    <li>SLA 99.9%</li>
+                    <li>Suporte 24/7</li>
                 </ul>
                 <button class="plan-button business" onclick="alert('Em breve! Sistema de pagamento será integrado.')">
                     Assinar Business
+                </button>
+            </div>
+
+            <!-- Plano Enterprise -->
+            <div class="plan-card">
+                <div class="plan-badge">👑 ENTERPRISE</div>
+                <div class="plan-name">Enterprise</div>
+                <div class="plan-price">R$ 199<span>/mês</span></div>
+                <ul class="plan-features">
+                    <li>Links ilimitados</li>
+                    <li>Tudo do Business +</li>
+                    <li>API ilimitada</li>
+                    <li>Múltiplos usuários (10)</li>
+                    <li>Domínio personalizado</li>
+                    <li>SSL customizado</li>
+                    <li>Backup diário</li>
+                    <li>Gerente de conta dedicado</li>
+                    <li>SLA 99.9%</li>
+                </ul>
+                <button class="plan-button business" onclick="alert('Entre em contato: contato@gourl.com.br')">
+                    Falar com Vendas
                 </button>
             </div>
         </div>
