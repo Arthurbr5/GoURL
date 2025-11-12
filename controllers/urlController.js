@@ -37,17 +37,22 @@ exports.createShortUrl = async (req, res) => {
       } while (await Url.findOne({ shortCode }));
     }
 
-    // Criar URL encurtada
-    const url = new Url({
+    // Criar URL encurtada (não incluir customAlias se for null)
+    const urlData = {
       shortCode,
       originalUrl,
-      customAlias: customAlias || null,
       userId,
       title: title || '',
       description: description || '',
       expiresAt: expiresAt || null
-    });
+    };
 
+    // Só adicionar customAlias se ele existir (evitar null no banco)
+    if (customAlias) {
+      urlData.customAlias = customAlias;
+    }
+
+    const url = new Url(urlData);
     await url.save();
 
     // Incrementar contador do usuário
